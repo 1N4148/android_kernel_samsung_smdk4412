@@ -132,7 +132,7 @@ static void wm8958_micd_set_rate(struct snd_soc_codec *codec)
 			    WM8958_MICD_RATE_MASK, val);
 }
 
-#ifndef CONFIG_SND_WOLFSON_SOUND_CONTROL
+#if defined CONFIG_SND_BOEFFLA && !defined CONFIG_SND_WOLFSON_SOUND_CONTROL
 static
 #endif
 int wm8994_readable(struct snd_soc_codec *codec, unsigned int reg)
@@ -176,7 +176,7 @@ int wm8994_readable(struct snd_soc_codec *codec, unsigned int reg)
 	return wm8994_access_masks[reg].readable != 0;
 }
 
-#ifndef CONFIG_SND_WOLFSON_SOUND_CONTROL
+#if defined CONFIG_SND_BOEFFLA && !defined CONFIG_SND_WOLFSON_SOUND_CONTROL
 static
 #endif
 int wm8994_volatile(struct snd_soc_codec *codec, unsigned int reg)
@@ -208,12 +208,28 @@ static int wm8994_write(struct snd_soc_codec *codec, unsigned int reg,
 
 	BUG_ON(reg > WM8994_MAX_REGISTER);
 
-#ifdef CONFIG_SND_BOEFFLA
+#if defined(CONFIG_TARGET_LOCALE_KOR)
+	if ((reg == WM8994_GPIO_1) && (value != WM8994_GP_FN_IRQ)) {
+		dev_err(codec->dev, "Invalid value for 700h\n");
+		return 0;
+	}
+#endif
+
+#if defined CONFIG_SND_BOEFFLA && !defined CONFIG_SND_WOLFSON_SOUND_CONTROL
 	value = Boeffla_sound_hook_wm8994_write(reg, value);
 #endif
 
-#ifdef CONFIG_SND_WOLFSON_SOUND_CONTROL
+#if defined CONFIG_SND_WOLFSON_SOUND_CONTROL && !defined CONFIG_SND_BOEFFLA
 	value = sound_control_hook_wm8994_write(reg, value);
+#endif
+
+#if defined CONFIG_SND_BOEFFLA && defined CONFIG_SND_WOLFSON_SOUND_CONTROL
+	if (!sound_control_hook_wm8994_write(reg, value)) {
+		value = Boeffla_sound_hook_wm8994_write(reg, value);
+	}
+	if (!Boeffla_sound_hook_wm8994_write(reg, value)) {
+		value = sound_control_hook_wm8994_write(reg, value);
+	}
 #endif
 
 	if (!wm8994_volatile(codec, reg)) {
@@ -226,7 +242,7 @@ static int wm8994_write(struct snd_soc_codec *codec, unsigned int reg,
 	return wm8994_reg_write(codec->control_data, reg, value);
 }
 
-#ifndef CONFIG_SND_WOLFSON_SOUND_CONTROL
+#if defined CONFIG_SND_BOEFFLA && !defined CONFIG_SND_WOLFSON_SOUND_CONTROL
 static
 #endif
 unsigned int wm8994_read(struct snd_soc_codec *codec,
