@@ -139,7 +139,6 @@ static struct dbs_tuners {
 	.down_differential = DEF_FREQUENCY_DOWN_DIFFERENTIAL,
 	.ignore_nice = 0,
 	.powersave_bias = 0,
-	.io_is_busy = 1,
 	.freq_step = 100,
 };
 
@@ -168,12 +167,11 @@ static inline cputime64_t get_cpu_idle_time_jiffy(unsigned int cpu,
 
 static inline cputime64_t get_cpu_idle_time(unsigned int cpu, cputime64_t *wall)
 {
-	u64 idle_time = get_cpu_idle_time_us(cpu, NULL);
+	u64 idle_time = get_cpu_idle_time_us(cpu, wall);
 
 	if (idle_time == -1ULL)
 		return get_cpu_idle_time_jiffy(cpu, wall);
-	else
-		idle_time += get_cpu_iowait_time_us(cpu, wall);
+
 	return idle_time;
 }
 
@@ -1030,7 +1028,6 @@ static int cpufreq_ondemand_flexrate_do(struct cpufreq_policy *policy,
 	return 0;
 }
 
-#ifndef CONFIG_CPU_FREQ_GOV_PEGASUSQ
 int cpufreq_ondemand_flexrate_request(unsigned int rate_us,
 				      unsigned int duration)
 {
@@ -1086,7 +1083,6 @@ out:
 	return err;
 }
 EXPORT_SYMBOL_GPL(cpufreq_ondemand_flexrate_request);
-#endif
 
 static ssize_t store_flexrate_request(struct kobject *a, struct attribute *b,
 				      const char *buf, size_t count)
