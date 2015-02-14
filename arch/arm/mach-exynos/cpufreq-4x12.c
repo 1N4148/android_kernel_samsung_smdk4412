@@ -623,7 +623,11 @@ static void __init set_volt_table(void)
 {
 	unsigned int i, tmp;
 
+#ifdef CONFIG_MACH_T0
 	max_support_idx = L0;
+#else
+	max_support_idx = L2;
+#endif
 
 	pr_info("DVFS : VDD_ARM Voltage table set with %d Group\n", exynos_result_of_asv);
 
@@ -695,10 +699,10 @@ static void __init set_volt_table(void)
  */
 #ifdef CONFIG_SLP
 static struct dvfs_qos_info exynos4x12_dma_lat_qos[] = {
-	{ 118,	200000, L20 },
-	{ 40,	500000, L17 },
-	{ 24,	800000, L14 },
-	{ 16,	1000000, L12 },
+	{ 118,	200000, L18 },
+	{ 40,	500000, L15 },
+	{ 24,	800000, L12 },
+	{ 16,	1000000, L10 },
 	{},
 };
 #endif
