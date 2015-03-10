@@ -1,0 +1,17 @@
+## AGNi Mounts (I9305 N710x I605)
+
+on early-fs
+    mkdir /system
+    mkdir /data
+    mkdir /cache
+    mkdir /preload
+    mkdir /firmware 0771 system system
+    mkdir /tombstones 0775 system system
+    wait /dev/block/mmcblk0p13
+    wait /dev/block/mmcblk0p16
+    wait /dev/block/mmcblk0p12
+    wait /dev/block/mmcblk0p14
+    wait /proc/mounts
+    exec /sbin/fs_checker.sh
+    wait /fs_checker_status
+

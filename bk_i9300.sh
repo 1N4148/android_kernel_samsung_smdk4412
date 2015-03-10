@@ -1,15 +1,6 @@
 #!/bin/sh
 export KERNELDIR=`readlink -f .`
 
-GCC_VERSION=4.9
-GCC_TOOLCHAIN=Linaro
-
-export USE_CCACHE=1
-export CROSS_DIR=/android/arm-cortex_a9-linux-gnueabihf-linaro_4.9.3-2014.11/bin
-export CROSS_COMPILE=$CROSS_DIR/arm-eabi-
-export ARM_CROSS_COMPILE=$CROSS_COMPILE
-export ARCH=arm
-
 make defconfig cm_m0_defconfig
 
 . $KERNELDIR/.config
