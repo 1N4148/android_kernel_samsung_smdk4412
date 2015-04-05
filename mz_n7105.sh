@@ -10,11 +10,11 @@ echo "Bundling installer for N7105"
 
 cd $ARCHIVE/N7105
 
-rm system/lib/modules/*.ko
-rm bs/bootimg/zImage
+rm prebuilt/system/lib/modules/*.ko
+rm prebuilt/zImage
 
-cp $KERNELDIR/BUILT_N7105/zImage bs/bootimg/zImage
-cp $KERNELDIR/BUILT_N7105/lib/modules/*.ko system/lib/modules/
+cp $KERNELDIR/BUILT_N7105/zImage prebuilt/zImage
+cp $KERNELDIR/BUILT_N7105/lib/modules/*.ko prebuilt/system/lib/modules/
 
 zip -r $ZIP/N7105/1N4148-kernel-N7105-$NOW.zip *
 
