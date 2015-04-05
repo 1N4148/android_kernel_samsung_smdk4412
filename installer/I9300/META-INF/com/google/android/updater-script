@@ -1,67 +1,59 @@
+#     _             _     _ _  __                    _
+#    / \   _ __ ___| |__ (_) |/ /___ _ __ _ __   ___| |
+#   / _ \ | '__/ __| '_ \| | ' // _ \ '__| '_ \ / _ \ |
+#  / ___ \| | | (__| | | | | . \  __/ |  | | | |  __/ |
+# /_/   \_\_|  \___|_| |_|_|_|\_\___|_|  |_| |_|\___|_|
+#
+# Copyright 2014 Łukasz "JustArchi" Domeradzki
+# Contact: JustArchi@JustArchi.net
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+ui_print(">>> ArchiKerel flasher is now loading...");
+#sleep (1);
 assert(getprop("ro.product.device") == "m0" || getprop("ro.build.product") == "m0" || 
        getprop("ro.product.device") == "i9300" || getprop("ro.build.product") == "i9300" || 
-       getprop("ro.product.device") == "GT-I9300" || getprop("ro.build.product") == "GT-I9300");
-ui_print("");
-ui_print(" PSN>> AGNi pureCM kernel v2.9.0 200MB Zram I9300");
-ui_print("");
-ui_print(" ZRAM with faster LZ4 compression");
-ui_print("   with Boefffla sound v1.6.7 ");
-ui_print(" Linux kernel 3.0.101 GCChf linaro 4.9.2");
-ui_print("     CPU & GPU OC/UV support ");
-ui_print(" MDNIE DISPLAY HIJACK ");
-ui_print("     F2FS support ");
-ui_print(" AGNi ANYROM INSTALLER v4.3.4 ");
-ui_print("     Inbuilt AGNi Control App !");
-ui_print("");
+       getprop("ro.product.device") == "GT-I9300" || getprop("ro.build.product") == "GT-I9300" || abort("This package is for \"m0,i9300,GT-I9300\" devices; this is a \"" + getprop("ro.product.device") + "\"."););
+ui_print("root@ArchiKernel:~# Ready!");
 set_progress(0.1);
-ui_print(" Mounting /system");
-run_program("/sbin/busybox", "mount", "/system") || ui_print("   /system is mounted already");
+run_program("/sbin/mount", "-t", "auto", "/system");
+run_program("/sbin/mount", "-t", "auto", "/data");
 set_progress(0.2);
-ui_print(" Extracting and preparing tools...");
-package_extract_dir("tools", "/tmp");
+ui_print("root@ArchiKernel:~# Flashing ArchiKernel");
+delete_recursive("/tmp/archikernel");
+package_extract_dir("core", "/tmp/archikernel");
+set_perm(0, 0, 0755, "/tmp/archikernel/init.sh");
+package_extract_file("prebuilt/zImage", "/tmp/archikernel/zImage");
+delete_recursive("/system/lib/modules");
+package_extract_dir("prebuilt/system", "/system");
+package_extract_dir("overlay", "/");
 set_progress(0.3);
-set_perm(0, 0, 0777, "/tmp/PSN_AGNi_builder.sh");
-set_perm(0, 0, 0777, "/tmp/cleanup.sh");
-set_perm(0, 0, 0755, "/tmp/reseter.sh");
-set_perm_recursive(0, 2000, 0777, 0777, "/tmp/packing/sbin/busybox");
-run_program("/tmp/packing/sbin/busybox", "sh", "/tmp/reseter.sh");
-set_progress(0.4);
-ui_print("");
-package_extract_dir("bs/init.d", "/system/etc/init.d");
-package_extract_dir("bs/bootimg", "/tmp/bootimg");
-package_extract_dir("bs/res", "/tmp/packing/res");
-ui_print(" Patching existing flashed kernel... ");
-run_program("/tmp/packing/sbin/busybox", "sh", "/tmp/PSN_AGNi_builder.sh");
-set_progress(0.5);
-ui_print(" Patched existing flashed kernel ! ");
-ui_print(" Extracting Required /system Files... ");
-package_extract_dir("system", "/system");
-set_progress(0.6);
-ui_print(" Setting Permissions... ");
-set_metadata_recursive("/system/etc/init.d", "uid", 0, "gid", 2000, "dmode", 0777, "fmode", 0777, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-set_metadata_recursive("/system/lib/modules", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-#set_metadata("/system/lib/egl/libEGL_mali.so", "uid", 0, "gid", 2000, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-#set_metadata("/system/lib/egl/libGLESv1_CM_mali.so", "uid", 0, "gid", 2000, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-#set_metadata("/system/lib/egl/libGLESv2_mali.so", "uid", 0, "gid", 2000, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-#set_metadata("/system/lib/libMali.so", "uid", 0, "gid", 2000, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-#set_metadata("/system/lib/libUMP.so", "uid", 0, "gid", 2000, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-#set_metadata("/system/lib/hw/gralloc.default.so", "uid", 0, "gid", 2000, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-#set_metadata("/system/lib/hw/gralloc.exynos4.so", "uid", 0, "gid", 2000, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-#set_metadata("/system/lib/hw/hwcomposer.exynos4.so", "uid", 0, "gid", 2000, "mode", 0644, "capabilities", 0x0, "selabel", "u:object_r:system_file:s0");
-set_progress(0.7);
-unmount("/system");
-ui_print(" /system unmounted ! ");
-ui_print("");
-ui_print(" Flashing AGNi pureCM kernel patched boot.img...");
-set_progress(0.8);
-assert(write_raw_image("/tmp/boot.img", "/dev/block/mmcblk0p5"),
+
+if run_program("/tmp/archikernel/init.sh") == "0" then
+	ui_print("===================================");
+	ui_print("  ArchiKernel Flashed Successfully ");
+	ui_print("Please share your experience on XDA");
+	ui_print("===================================");
+else
+	ui_print("=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=");
+	ui_print("ERROR!!! Please attach: ");
+	ui_print("/data/media/0/ArchiKernelError.log");
+	ui_print("on forum.xda-developers.com");
+	ui_print("=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=!=");
+	run_program("/sbin/cp", "/tmp/archikernel/ArchiKernel.log", "/data/media/0/ArchiKernelError.log");
+endif;
+
 set_progress(0.9);
-delete("/tmp/boot.img"));
-run_program("/sbin/busybox", "sh", "/tmp/cleanup.sh");
-delete("/tmp/cleanup.sh");
-ui_print(" Flashed AGNi pureCM kernel ! ");
-ui_print("  A logfile has been placed at ");
-ui_print("    /data/.AGNi for your reference. ");
-ui_print("");
-ui_print("  * Enjoy *");
+unmount("/system");
+unmount("/data");
 set_progress(1.0);

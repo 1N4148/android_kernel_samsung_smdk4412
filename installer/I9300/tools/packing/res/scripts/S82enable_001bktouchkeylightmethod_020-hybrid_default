@@ -1,7 +1,0 @@
-#!/sbin/busybox sh
-#TOUCHKEY LIGHTS METHOD
-#Select hardware touch keys lights method (ROM DEPENDENT) :
-#HYBRID CONTROL (default)
-
-echo 2 > /sys/class/sec/sec_touchkey/touch_led_handling
-
