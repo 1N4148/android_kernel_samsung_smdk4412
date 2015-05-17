@@ -124,21 +124,21 @@ static unsigned long down_sample_time;
 /*
  * CPU freq will be increased if measured load > inc_cpu_load;
  */
-#define DEFAULT_INC_CPU_LOAD 80
+#define DEFAULT_INC_CPU_LOAD 85
 static unsigned long inc_cpu_load;
 
 /*
  * CPU freq will be decreased if measured load < dec_cpu_load;
  * not implemented yet.
  */
-#define DEFAULT_DEC_CPU_LOAD 60
+#define DEFAULT_DEC_CPU_LOAD 650
 static unsigned long dec_cpu_load;
 
 /*
  * Increasing frequency table index
  * zero disables and causes to always jump straight to max frequency.
  */
-#define DEFAULT_PUMP_UP_STEP 2
+#define DEFAULT_PUMP_UP_STEP 1
 static unsigned long pump_up_step;
 
 /*
@@ -185,11 +185,7 @@ static int get_jiffies_normalized(unsigned long rate)
 }
 
 
-#ifndef CONFIG_CPU_EXYNOS4210
 #define RQ_AVG_TIMER_RATE	10
-#else
-#define RQ_AVG_TIMER_RATE	20
-#endif
 
 struct runqueue_data {
 	unsigned int nr_run_avg;
@@ -292,38 +288,25 @@ static unsigned int get_nr_run_avg(void)
 #define MAX_HOTPLUG_RATE			(40u)
 
 #define DEF_MAX_CPU_LOCK			(0)
-#define DEF_MIN_CPU_LOCK			(0)
+#define DEF_MIN_CPU_LOCK			(2)
 #define DEF_UP_NR_CPUS				(1)
 #define DEF_CPU_UP_RATE				(13)
 #define DEF_CPU_DOWN_RATE			(13)
 #define DEF_START_DELAY				(0)
-
+#define DEF_HISPEED_FREQ			(600000)
 #define HOTPLUG_DOWN_INDEX			(0)
 #define HOTPLUG_UP_INDEX			(1)
 
-#ifdef CONFIG_MACH_MIDAS
 static int hotplug_rq[4][2] = {
-	{0, 200}, {200, 300}, {300, 400}, {400, 0}
-};
-
-static int hotplug_freq[4][2] = {
-	{0, 500000},
-	{200000, 500000},
-	{400000, 800000},
-	{500000, 0}
-};
-#else
-static int hotplug_rq[4][2] = {
-	{0, 350}, {290, 350}, {290, 400}, {350, 0}
+	{0, 100}, {100, 200}, {200, 300}, {300, 0}
 };
 
 static int hotplug_freq[4][2] = {
 	{0, 600000},
-	{400000, 700000},
-	{500000, 800000},
-	{600000, 0}
+	{200000, 600000},
+	{200000, 600000},
+	{200000, 0}
 };
-#endif
 
 static int cpufreq_governor_lulzactive(struct cpufreq_policy *policy,
 		unsigned int event);
@@ -1960,7 +1943,7 @@ static int cpufreq_governor_lulzactive(struct cpufreq_policy *policy,
 		}
 
 		if (!hispeed_freq)
-			hispeed_freq = policy->max;
+			hispeed_freq = DEF_HISPEED_FREQ;
 
 		/*  starting hotplug */
 		pcpu = &per_cpu(cpuinfo, policy->cpu);
