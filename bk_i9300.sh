@@ -1,7 +1,7 @@
 #!/bin/sh
 export KERNELDIR=`readlink -f .`
 
-make defconfig psn_i9300_new_defconfig
+make defconfig cm_m0_defconfig
 
 . $KERNELDIR/.config
 

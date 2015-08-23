@@ -6,17 +6,17 @@ ZIP=/media/nas/Intenso-UltraLine-01/Android
 
 NOW=$(date +"%Y%m%d-%H%M")
 
-echo "Bundling installer for N7105"
+echo "Bundling installer for I9300"
 
-cd $ARCHIVE/N7105
+cd $ARCHIVE/I9300
 
 rm prebuilt/system/lib/modules/*.ko
 rm prebuilt/zImage
 
-cp $KERNELDIR/BUILT_N7105/zImage prebuilt/zImage
-cp $KERNELDIR/BUILT_N7105/lib/modules/*.ko prebuilt/system/lib/modules/
+cp $KERNELDIR/BUILT_I9300/zImage prebuilt/zImage
+cp $KERNELDIR/BUILT_I9300/lib/modules/*.ko prebuilt/system/lib/modules/
 
-zip -r $ZIP/N7105/1N4148-kernel-N7105-$NOW.zip *
+zip -r $ZIP/I9300/1N4148-kernel-I9300-$NOW.zip *
 
 cd ..
 echo "finished"

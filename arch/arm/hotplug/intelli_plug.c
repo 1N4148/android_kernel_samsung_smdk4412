@@ -51,6 +51,7 @@ static struct workqueue_struct *intelliplug_wq;
 static struct workqueue_struct *intelliplug_boost_wq;
 
 unsigned int intelli_plug_active = 0;
+module_param(intelli_plug_active, uint, 0664);
 EXPORT_SYMBOL(intelli_plug_active);
 
 static unsigned int nr_run_profile_sel = 0;
@@ -73,6 +74,9 @@ static DEFINE_PER_CPU(struct ip_cpu_info, ip_info);
 
 static unsigned int screen_off_max = UINT_MAX;
 module_param(screen_off_max, uint, 0664);
+
+static unsigned int cpu_min_limit = 2;
+module_param(cpu_min_limit, uint, 0664);
 
 #define CAPACITY_RESERVE	50
 
@@ -230,7 +234,7 @@ static void unplug_cpu(int min_active_cpu)
 		if (cpu == 0)
 			continue;
 		l_ip_info = &per_cpu(ip_info, cpu);
-		if (cpu > min_active_cpu)
+		if ((cpu > min_active_cpu) && ((cpu + 1) > cpu_min_limit))
 			if (l_ip_info->cpu_nr_running < l_nr_threshold)
 				cpu_down(cpu);
 	}

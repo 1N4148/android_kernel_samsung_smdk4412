@@ -737,7 +737,7 @@ static int exynos_cpufreq_policy_notifier_call(struct notifier_block *this,
 			if (!intelli_plug_active) {
 				printk(KERN_DEBUG "enabling intelli_plug for governor: %s\n",
 								policy->governor->name);
-				intelli_plug_active = 1;
+				intelli_plug_active = 0;
 			}
 		} /* intelli_plug */
 
